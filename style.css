@@ -1,3 +1,4 @@
+/* --- layout --- */
 body {
   font-family: Arial, sans-serif;
   background: #f9f9f9;
@@ -5,85 +6,55 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
-
 .card {
   background: #fff;
-  padding: 2rem;
+  padding: 1.6rem;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  width: 500px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  width: 520px;
+  margin-bottom: 18px;
 }
+h2 { margin-top: 0; font-size: 1.15rem; }
+h3 { margin: 0 0 8px 0; }
+h4 { margin: 0 0 8px 0; }
 
-h2 {
-  margin-top: 0;
-  font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.forward-box {
-  display: flex;
-  align-items: center;
-}
-
+/*forward box*/
+.forward-box { display:flex; gap:8px; align-items:center; }
 .forward-box input[type="text"] {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+  flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px;
 }
+.copy-btn { padding:8px 10px; border:none; background:#eee; border-radius:6px; cursor:pointer; }
 
-.copy-btn {
-  padding: 8px 12px;
-  margin-left: 6px;
-  border: none;
-  background: #eee;
-  border-radius: 6px;
-  cursor: pointer;
-}
+/*divider*/
+.divider { display:flex; align-items:center; text-align:center; margin:14px 0; color:#555; font-weight:700; }
+.divider::before, .divider::after { content:""; flex:1; border-bottom:1px solid #ddd; }
+.divider:not(:empty)::before { margin-right:0.6em; } 
+.divider:not(:empty)::after { margin-left:0.6em; }
 
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 1.5rem 0;
-  color: #555;
-  font-weight: bold;
-}
-.divider::before, .divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #ccc;
-}
-.divider:not(:empty)::before {
-  margin-right: 0.5em;
-}
-.divider:not(:empty)::after {
-  margin-left: 0.5em;
-}
+/*textarea & button*/
+textarea { width:100%; min-height:120px; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px; resize:vertical; }
+.btn { margin-top:10px; padding:10px 16px; background:#7e3af2; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px; }
+.btn:hover { background:#692bd6; }
 
-textarea {
-  width: 100%;
-  min-height: 120px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  resize: vertical;
-}
+/*hidden helper*/
+.hidden { display:none; }
 
-.btn {
-  margin-top: 1rem;
-  padding: 10px 16px;
-  background: #7e3af2;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
+/*scoring card layout*/
+.score-row { display:flex; align-items:center; gap:12px; }
+.score-circle {
+  width:64px; height:64px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; color:#fff; background:#777; font-size:20px;
 }
+.progress {height:12px; background:#eee; border-radius:8px; overflow:hidden; width:100%; }
+.progress-fill {height:100%; width:0%; background:#2e7d32; transition:width 400ms ease; }
+
+/* breakdown list */
+#breakdownList { margin:8px 0 0 16px; color:#333; }
+#breakdownList li { margin-bottom:6px; font-size:14px; }
+
+/* verdict colors */
+.verdict-safe { color: #2e7d32; }
+.verdict-suspicious { color: #d47f00; }
+.verdict-high { color: #b00020; }

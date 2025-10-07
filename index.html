@@ -1,39 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Email Scanner – Submit</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="card"> <!--<div> is short for division-->
+  <!-- Submit card -->
+  <div class="card">
     <h2>📧 Submit an Email for Analysis</h2>
-    <!--<p> tag stands for paragraph-->
-    <p><strong>Option 1: Forward the email</strong></p> 
+
+    <p><strong>Option 1: Forward the email</strong></p>
     <p>Forward your suspicious email to the address below and it will return an email to you with an analysis</p>
     <div class="forward-box">
-      <input type="text" value="emailphishingscanner@gmail.com" readonly>
-      <button class="copy-btn">📋</button>
+      <input id="forwardAddr" type="text" value="emailphishingscanner@gmail.com" readonly />
+      <button id="copyBtn" class="copy-btn">📋</button>
     </div>
 
     <div class="divider">OR</div>
 
     <p><strong>Option 2: paste email content</strong></p>
-    <p>Paste the full raw content of the email into the box below for analysis.</p>
-    <textarea placeholder="paste raw email source here"></textarea>
+    <p>Paste the full raw content of the email into the box below for analysis. (Optional: paste raw headers to allow header checks)</p>
+    <textarea id="emailBody" placeholder="paste raw email source here"></textarea>
+    <textarea id="rawHeaders" placeholder="(Optional) paste raw headers here for From/Reply-To checks" style="margin-top:8px; min-height:60px;"></textarea>
 
-    <button class="btn">✈ Analyze Now ✈</button>
+    <button id="analyzeBtn" class="btn">✈ Analyze Now ✈</button>
   </div>
-  <div class="card"> 
+
+  <!-- Details card -->
+  <div id="detailsCard" class="card hidden">
     <h3>Email Details</h3>
-
-    <p> this is where the email details will go</p>
-
+    <p><strong>From (parsed):</strong> <span id="outFrom">(none)</span></p>
+    <p><strong>Subject (preview):</strong> <span id="outSubject">(none)</span></p>
+    <p><strong>Preview:</strong></p>
+    <pre id="outPreview"></pre>
   </div>
-  <div class="card">
+
+  <!-- Scoring card -->
+  <div id="scoringCard" class="card hidden">
     <h4>Scoring Card</h4>
 
-    
+    <div class="score-row">
+      <div class="score-circle" id="scoreCircle">0</div>
+      <div style="flex:1; margin-left:16px;">
+        <div class="progress" id="scoreBarWrap">
+          <div id="scoreBar" class="progress-fill" style="width:0%"></div>
+        </div>
+        <div id="verdictText" style="margin-top:8px; font-weight:700">Verdict: —</div>
+      </div>
+    </div>
+
+    <h5 style="margin-top:16px">Breakdown</h5>
+    <ul id="breakdownList"></ul>
+
+    <p style="font-size:12px; color:#666; margin-top:12px;">
+      Scoring is heuristic for demonstration. When you integrate server-side analysis, replace these rules with your ruleset or ML model.
+    </p>
   </div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
