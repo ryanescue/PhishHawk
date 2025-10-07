@@ -1,0 +1,111 @@
+//This is the google script that i am using to pull fowarded emails and parse them into a table with there seperated feilds
+
+function exportEmailToSheet() {
+  var LABLENAME = 'forwarded';
+  var label = GmailApp.getUserLabelByName(LABLENAME);
+  if (!label) {
+    Logger.log("Label not found: " + LABLENAME);
+    return;
+  }
+
+  var threads = label.getThreads();
+  var ss = SpreadsheetApp.openById('1sq6HbAI67YeyizY9SILR7jF1CGDrNR3jGR05GHLmh10');
+  var sheet = ss.getSheetByName('Sheet1');
+
+  // Write header only if sheet is empty
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['Date', 'Sender', 'Subject', 'FullBody', 'OrigFrom', 'OrigBody']);
+  }
+
+  for (var i = 0; i < threads.length; i++) {
+    var messages = threads[i].getMessages();
+    for (var j = 0; j < messages.length; j++) {
+      var msg = messages[j];
+      var date = msg.getDate();
+      var from = msg.getFrom();
+      var subject = msg.getSubject();
+      var fullBody = msg.getPlainBody(); // or getBody() for HTML
+
+      var parsed = parseForwardedBlock(fullBody);
+      var origFrom = parsed.origFrom || '';
+      var origBody = parsed.origBody || '';
+
+      sheet.appendRow([date, from, subject, fullBody, origFrom, origBody]);
+    }
+
+    // OPTIONAL: remove the 'forwarded' label so you don't process these again
+    // label.removeFromThread(threads[i]);
+  }
+}
+
+/**
+ * Parse a Gmail-forwarded email block like:
+ * "---------- Forwarded message ---------
+ *  From: Name <email@domain.com>
+ *  Date: ...
+ *  Subject: ...
+ *  To: <someone@domain.com>
+ *
+ *  <body starts here>"
+ *
+ * Returns { origFrom, origBody }
+ */
+function parseForwardedBlock(text) {
+  if (!text) return { origFrom: '', origBody: '' };
+
+  var body = String(text).replace(/\r\n/g, '\n');
+
+  var markerIdx = body.indexOf('---------- Forwarded message ---------');
+  var segment = markerIdx >= 0 ? body.substring(markerIdx) : body;
+
+  //grab the headers block = from start up to the first blank line
+  var firstDoubleNl = segment.indexOf('\n\n');
+  var headersBlock, remainder;
+  if (firstDoubleNl >= 0) {
+    headersBlock = segment.substring(0, firstDoubleNl);
+    remainder = segment.substring(firstDoubleNl + 2);
+  } else {
+    // No blank line? Treat all as headers, body empty
+    headersBlock = segment;
+    remainder = '';
+  }
+
+  //extract original FROM email looks for <xxxxx@xxx>
+  //Matches: From: Something <email@domain.com> OR From: email@domain.com
+  var fromEmail = '';
+  var fromLineMatch = headersBlock.match(/^\s*From:\s*(.+)$/im);
+  if (fromLineMatch) {
+    var fromLine = fromLineMatch[1];
+    // Try <email@...>
+    var angle = fromLine.match(/<\s*([^>]+)\s*>/);
+    if (angle && angle[1]) {
+      fromEmail = angle[1].trim();
+    } else {
+      //fallback to look: first email-looking token on the line
+      var email = fromLine.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+      if (email) fromEmail = email[0];
+    }
+  }
+
+  //body should start after the TO: line; we already split at the first blank line
+  var origBody = remainder.trim();
+
+  // find a From:/To:/Subject: header block anywhere and split after its blank line.
+  if (!fromEmail && markerIdx < 0) {
+    var hdrStart = body.search(/^\s*From:\s*/im);
+    if (hdrStart >= 0) {
+      var sub = body.substring(hdrStart);
+      var dbl = sub.indexOf('\n\n');
+      if (dbl >= 0) {
+        var hdrs = sub.substring(0, dbl);
+        var rem = sub.substring(dbl + 2);
+        var m2 = hdrs.match(/^\s*From:[^\n]*<\s*([^>]+)\s*>/im) ||
+                 hdrs.match(/^\s*From:[^\n]*([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/im);
+        if (m2) fromEmail = (m2[1] || '').trim();
+        if (rem) origBody = rem.trim();
+      }
+    }
+  }
+
+  return { origFrom: fromEmail, origBody: origBody };
+}
