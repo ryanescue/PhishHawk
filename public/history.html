@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+      <title>Email Scanner – History</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="brand">PhishHawk</a>
+    <div class="spacer"></div>
+    <a href="index.html" class="link">Home</a>
+    <a href="history.html" class="link active">History</a>
+  </nav>
+
+  <div class="card history-wrapper">
+    <div class="history-header">
+      <div>
+        <h3>Scan History</h3>
+        <p>Review past analyses, filter by sender, score, and original date.</p>
+      </div>
+      <button id="clearFiltersBtn" class="secondary-btn" type="button">Clear Filters</button>
+    </div>
+
+    <ul class="history-filters">
+      <li>
+        <label>
+          Sender / Domain
+          <input type="text" id="filterSender" placeholder="e.g. payroll@example.com" />
+        </label>
+      </li>
+      <li>
+        <label>
+          Score
+          <select id="filterScore">
+            <option value="all">All</option>
+            <option value="safe">0-24 · Likely Safe</option>
+            <option value="suspect">25-49 · Potentially Phishing</option>
+            <option value="high">50-74 · High Risk</option>
+            <option value="danger">75-100 · Known Dangerous</option>
+          </select>
+        </label>
+      </li>
+      <li>
+        <label>
+          Original Date (from)
+          <input type="date" id="filterDateFrom" />
+        </label>
+      </li>
+      <li>
+        <label>
+          Original Date (to)
+          <input type="date" id="filterDateTo" />
+        </label>
+      </li>
+    </ul>
+
+    <div id="historyStats" class="history-stats"></div>
+    <div id="historyList" class="history-list"></div>
+  </div>
+
+  <script type="module" src="history.js"></script>
+</body>
+</html>
